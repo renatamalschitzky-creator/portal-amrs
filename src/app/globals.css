@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0d0d0d;
+
+  /* AMRS brand */
+  --amrs-laranja: #fb6b00;
+  --amrs-preto: #0d0d0d;
+  --amrs-vinho: #79193e;
+  --amrs-branco: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-amrs-laranja: var(--amrs-laranja);
+  --color-amrs-preto: var(--amrs-preto);
+  --color-amrs-vinho: var(--amrs-vinho);
+  --color-amrs-branco: var(--amrs-branco);
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Montserrat', sans-serif;
+}
