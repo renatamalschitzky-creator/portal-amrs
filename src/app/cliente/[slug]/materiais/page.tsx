@@ -6,10 +6,10 @@ export default async function PaginaDeMateriais({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ t?: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
   const { slug } = await params;
-  const { t } = await searchParams;
+  const { token: t } = await searchParams;
 
   const acesso = await validarAcesso(slug, t);
   if (!acesso.ok) return <MensagemDeAcesso motivo={acesso.motivo} />;
@@ -19,7 +19,7 @@ export default async function PaginaDeMateriais({
   return (
     <div className="min-h-screen bg-white">
       <header className="flex items-center justify-between bg-amrs-preto px-8 py-4 text-white">
-        <a href={`/cliente/${slug}?t=${t}`} className="text-sm font-semibold text-neutral-300">
+        <a href={`/cliente/${slug}?token=${t}`} className="text-sm font-semibold text-neutral-300">
           ← Voltar ao calendário
         </a>
         <div className="text-lg font-black tracking-wide">

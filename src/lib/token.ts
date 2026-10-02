@@ -18,7 +18,7 @@ export function gerarToken(): string {
 /**
  * Monta o link único e definitivo de um cliente.
  * O slug não precisa ser secreto (fica visível na URL) — quem garante o
- * acesso é o token longo e aleatório no parâmetro `t`.
+ * acesso é o token longo e aleatório no parâmetro `token`.
  */
 export function montarLinkDoPortal(
   baseUrl: string,
@@ -32,6 +32,6 @@ export function montarLinkDoPortal(
     slug = `${base}-${i++}`;
   }
   const token = gerarToken();
-  const url = `${baseUrl.replace(/\/$/, "")}/cliente/${slug}?t=${token}`;
+  const url = `${baseUrl.replace(/\/$/, "")}/cliente/${slug}?token=${token}`;
   return { slug, token, url };
 }

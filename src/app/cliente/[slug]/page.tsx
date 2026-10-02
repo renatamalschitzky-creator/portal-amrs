@@ -8,10 +8,10 @@ export default async function PaginaDoCliente({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ t?: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
   const { slug } = await params;
-  const { t } = await searchParams;
+  const { token: t } = await searchParams;
 
   const acesso = await validarAcesso(slug, t);
   if (!acesso.ok) return <MensagemDeAcesso motivo={acesso.motivo} />;
@@ -64,7 +64,7 @@ export default async function PaginaDoCliente({
 
         <aside className="w-64 shrink-0 space-y-4">
           <a
-            href={`/cliente/${slug}/perfil?t=${t}`}
+            href={`/cliente/${slug}/perfil?token=${t}`}
             className="block rounded-2xl border border-neutral-200 p-5 hover:border-amrs-laranja"
           >
             <div className="text-sm font-bold text-amrs-preto">Meu Perfil</div>
@@ -73,7 +73,7 @@ export default async function PaginaDoCliente({
             </div>
           </a>
           <a
-            href={`/cliente/${slug}/materiais?t=${t}`}
+            href={`/cliente/${slug}/materiais?token=${t}`}
             className="block rounded-2xl border border-neutral-200 p-5 hover:border-amrs-laranja"
           >
             <div className="text-sm font-bold text-amrs-preto">Materiais</div>

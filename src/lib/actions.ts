@@ -73,5 +73,5 @@ export async function salvarBriefing(
   const markdown = montarMarkdown(respostas);
   await concluirBriefing(briefingId, nivel, markdown);
 
-  redirect(`/cliente/${slug}?t=${token}&briefing=salvo`);
+  redirect(`/cliente/${slug}?token=${token}&briefing=salvo`);
 }
