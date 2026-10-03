@@ -6,6 +6,8 @@ import {
   getBriefingDoCliente,
   salvarRascunhoBriefing,
   concluirBriefing,
+  salvarConfiguracaoDoMes,
+  type ObjetivoDoMes,
 } from "./notion";
 import { BLOCOS, TOTAL_PERGUNTAS } from "./briefing-perguntas";
 
@@ -74,4 +76,25 @@ export async function salvarBriefing(
   await concluirBriefing(briefingId, nivel, markdown);
 
   redirect(`/cliente/${slug}?token=${token}&briefing=salvo`);
+}
+
+/**
+ * Salva a Configuração do mês (objetivo, dias de postagem, quantidade de
+ * posts e tema opcional). Ainda não dispara geração nenhuma — só grava.
+ */
+export async function salvarConfiguracao(
+  slug: string,
+  token: string,
+  config: {
+    objetivo: ObjetivoDoMes;
+    diasDePostagem: string[];
+    postsPorSemana: number;
+    temaDoMes?: string;
+  }
+): Promise<{ ok: boolean }> {
+  const cliente = await findClienteBySlugAndToken(slug, token);
+  if (!cliente) return { ok: false };
+
+  await salvarConfiguracaoDoMes(cliente.id, config);
+  return { ok: true };
 }

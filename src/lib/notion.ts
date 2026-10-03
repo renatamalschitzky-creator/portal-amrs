@@ -13,6 +13,8 @@ export const DB = {
 
 export type StatusCliente = "Ativo" | "Pausado" | "Encerrado";
 
+export type ObjetivoDoMes = "Atração" | "Qualificação" | "Conversão";
+
 export type Cliente = {
   id: string;
   nome: string;
@@ -23,6 +25,10 @@ export type Cliente = {
   linkAcesso?: string;
   instagram?: string;
   pastaMateriais?: string;
+  objetivoDoMes?: ObjetivoDoMes;
+  diasDePostagem: string[];
+  postsPorSemana?: number;
+  temaDoMes?: string;
 };
 
 export type PostCalendario = {
@@ -70,6 +76,15 @@ function checkbox(prop: any): boolean {
 function richText(prop: any): string {
   return prop?.rich_text?.map((t: any) => t.plain_text).join("") ?? "";
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function multiSelect(prop: any): string[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return prop?.multi_select?.map((o: any) => o.name) ?? [];
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function number(prop: any): number | undefined {
+  return typeof prop?.number === "number" ? prop.number : undefined;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapCliente(page: any): Cliente {
@@ -84,7 +99,36 @@ function mapCliente(page: any): Cliente {
     linkAcesso: url(p["Link de acesso (Portal)"]),
     instagram: url(p["Instagram"]),
     pastaMateriais: url(p["Pasta de materiais (Drive)"]),
+    objetivoDoMes: select(p["Objetivo do mês"]) as ObjetivoDoMes | undefined,
+    diasDePostagem: multiSelect(p["Dias de postagem"]),
+    postsPorSemana: number(p["Posts por semana"]),
+    temaDoMes: richText(p["Tema do mês"]) || undefined,
   };
+}
+
+/**
+ * Salva a Configuração do mês definida pelo cliente (objetivo, dias de
+ * postagem, quantidade de posts por semana e tema opcional). Não gera
+ * calendário sozinho — isso fica para a etapa do motor de geração por IA.
+ */
+export async function salvarConfiguracaoDoMes(
+  clienteId: string,
+  config: {
+    objetivo: ObjetivoDoMes;
+    diasDePostagem: string[];
+    postsPorSemana: number;
+    temaDoMes?: string;
+  }
+): Promise<void> {
+  await notion.pages.update({
+    page_id: clienteId,
+    properties: {
+      "Objetivo do mês": { select: { name: config.objetivo } },
+      "Dias de postagem": { multi_select: config.diasDePostagem.map((nome) => ({ name: nome })) },
+      "Posts por semana": { number: config.postsPorSemana },
+      "Tema do mês": { rich_text: config.temaDoMes ? [{ text: { content: config.temaDoMes } }] : [] },
+    },
+  });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

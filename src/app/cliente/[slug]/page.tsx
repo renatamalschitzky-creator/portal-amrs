@@ -2,6 +2,7 @@ import { getCalendarioDoCliente, getBriefingDoCliente } from "@/lib/notion";
 import { validarAcesso } from "@/lib/acesso";
 import CalendarioGrid from "@/components/CalendarioGrid";
 import MensagemDeAcesso from "@/components/MensagemDeAcesso";
+import ConfiguracaoDoMes from "@/components/ConfiguracaoDoMes";
 
 export default async function PaginaDoCliente({
   params,
@@ -23,12 +24,6 @@ export default async function PaginaDoCliente({
   ]);
 
   const ciclo = posts[0]?.ciclo || "";
-  const objetivoPrincipal =
-    posts.reduce<Record<string, number>>((acc, p) => {
-      if (p.objetivo) acc[p.objetivo] = (acc[p.objetivo] ?? 0) + 1;
-      return acc;
-    }, {});
-  const objetivoDoMes = Object.entries(objetivoPrincipal).sort((a, b) => b[1] - a[1])[0]?.[0];
 
   return (
     <div className="min-h-screen bg-white">
@@ -45,15 +40,15 @@ export default async function PaginaDoCliente({
 
       <main className="mx-auto flex max-w-6xl gap-10 px-8 py-10">
         <div className="flex-1">
-          <div className="mb-8 flex flex-col gap-2 rounded-2xl bg-amrs-vinho p-6 text-white">
-            <div className="text-xs font-bold uppercase tracking-wide text-white/70">
-              Configuração do mês
-            </div>
-            <div className="text-2xl font-black">{ciclo || "Ciclo atual"}</div>
-            <div className="text-sm font-light text-white/80">
-              Objetivo: <span className="font-semibold">{objetivoDoMes ?? "—"}</span>
-            </div>
-          </div>
+          <ConfiguracaoDoMes
+            slug={slug}
+            token={t!}
+            ciclo={ciclo}
+            objetivoAtual={cliente.objetivoDoMes}
+            diasAtuais={cliente.diasDePostagem}
+            postsPorSemanaAtual={cliente.postsPorSemana}
+            temaAtual={cliente.temaDoMes}
+          />
 
           <h1 className="mb-4 text-xl font-black text-amrs-preto">
             Olá, {cliente.nome.split(" (")[0]} 👋
