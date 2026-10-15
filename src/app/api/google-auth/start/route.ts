@@ -3,12 +3,14 @@ import { ESCOPO_DRIVE } from "@/lib/drive";
 
 /**
  * Passo único de autorização da conta Google da Renata.
- * Acesse /api/google-auth/start?chave=CRON_SECRET para começar.
+ * Acesse /api/google-auth/start para começar. Só funciona enquanto o
+ * GOOGLE_REFRESH_TOKEN ainda não foi configurado. Quem autoriza só consegue
+ * ver o código da própria conta Google, então a página não expõe nada.
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  if (!process.env.CRON_SECRET || url.searchParams.get("chave") !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: "não autorizado" }, { status: 401 });
+  if (process.env.GOOGLE_REFRESH_TOKEN) {
+    return NextResponse.json({ error: "autorização já configurada" }, { status: 403 });
   }
   if (!process.env.GOOGLE_CLIENT_ID) {
     return NextResponse.json({ error: "GOOGLE_CLIENT_ID não configurado" }, { status: 500 });
