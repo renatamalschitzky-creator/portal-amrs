@@ -1,5 +1,7 @@
 import { validarAcesso } from "@/lib/acesso";
 import MensagemDeAcesso from "@/components/MensagemDeAcesso";
+import EnviarArquivos from "@/components/EnviarArquivos";
+import { driveConfigurado } from "@/lib/drive";
 
 export default async function PaginaDeMateriais({
   params,
@@ -37,19 +39,39 @@ export default async function PaginaDeMateriais({
         <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-8 text-center">
           <div className="mb-3 text-3xl">📎</div>
           {pastaMateriais ? (
-            <>
-              <p className="mb-4 text-sm text-neutral-600">
-                Sua pasta de materiais já está pronta. Envie os arquivos direto por lá.
-              </p>
-              <a
-                href={pastaMateriais}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block rounded-full bg-amrs-preto px-6 py-3 text-sm font-bold text-white"
-              >
-                Abrir pasta no Drive
-              </a>
-            </>
+            driveConfigurado() ? (
+              <>
+                <p className="mb-4 text-sm text-neutral-600">
+                  Escolha os arquivos no seu aparelho e envie por aqui. Eles chegam direto na sua
+                  pasta, sem precisar de login.
+                </p>
+                <EnviarArquivos slug={slug} token={t ?? ""} />
+                <p className="mt-6 text-xs text-neutral-500">
+                  <a
+                    href={pastaMateriais}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    Ver minha pasta no Drive
+                  </a>
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-neutral-600">
+                  Sua pasta de materiais já está pronta. Envie os arquivos direto por lá.
+                </p>
+                <a
+                  href={pastaMateriais}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block rounded-full bg-amrs-preto px-6 py-3 text-sm font-bold text-white"
+                >
+                  Abrir pasta no Drive
+                </a>
+              </>
+            )
           ) : (
             <p className="text-sm text-neutral-600">
               Sua pasta de materiais ainda está sendo preparada. Assim que estiver pronta, o link
