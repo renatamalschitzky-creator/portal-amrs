@@ -58,7 +58,71 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-hidden rounded-2xl border border-neutral-200">
+      {/* Celular: lista por dia */}
+      <div className="flex flex-col gap-5 md:hidden">
+        {semanas.map((semana, si) => {
+          const diasComPost = semana.filter((d) => d.posts.length > 0);
+          if (diasComPost.length === 0) return null;
+          const primeiro = semana[0].data;
+          const ultimo = semana[6].data;
+          const fmt = (d: Date) =>
+            d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+          return (
+            <section key={si}>
+              <div className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-400">
+                Semana {fmt(primeiro)} a {fmt(ultimo)}
+              </div>
+              <div className="flex flex-col gap-2">
+                {diasComPost.flatMap((dia) =>
+                  dia.posts.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => setPostSelecionado(p)}
+                      className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3 text-left active:bg-neutral-50"
+                    >
+                      <div className="w-12 shrink-0 text-center leading-tight">
+                        <div className="text-[10px] font-bold uppercase text-neutral-400">
+                          {dia.data
+                            .toLocaleDateString("pt-BR", { weekday: "short" })
+                            .replace(".", "")}
+                        </div>
+                        <div className="text-lg font-black text-amrs-preto">
+                          {dia.data.getDate()}
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1 flex flex-wrap items-center gap-2">
+                          <span
+                            className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${corDoFormato(
+                              p.formato
+                            )}`}
+                          >
+                            {p.formato ?? "Post"}
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+                            {p.editoria ?? ""}
+                          </span>
+                          {p.feriado && (
+                            <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+                              data comemorativa
+                            </span>
+                          )}
+                        </div>
+                        <div className="line-clamp-2 text-sm text-amrs-preto">
+                          {p.direcionamentoTema || "Toque para ver os detalhes"}
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
+      {/* Computador e tablet: grade do mês */}
+      <div className="hidden overflow-hidden rounded-2xl border border-neutral-200 md:block">
         <div className="grid grid-cols-7 bg-amrs-preto text-white">
           {DIAS_SEMANA.map((d) => (
             <div key={d} className="px-3 py-2 text-center text-xs font-bold tracking-wide">
@@ -107,14 +171,14 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
 
       {postSelecionado && (
         <div
-          className="fixed inset-0 z-20 flex items-center justify-center bg-black/40 px-6"
+          className="fixed inset-0 z-20 flex items-end justify-center bg-black/40 sm:items-center sm:px-6"
           onClick={() => setPostSelecionado(null)}
         >
           <div
-            className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
+            className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-t-2xl bg-white p-5 shadow-xl sm:rounded-2xl sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-3 flex items-center justify-between">
+            <div className="sticky top-0 -mt-1 mb-3 flex items-center justify-between bg-white py-1">
               <span
                 className={`rounded-md px-2 py-1 text-xs font-bold ${corDoFormato(
                   postSelecionado.formato

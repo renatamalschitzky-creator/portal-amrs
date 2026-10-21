@@ -43,7 +43,7 @@ export default function BriefingForm({
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="sticky top-0 z-10 -mx-8 flex items-center justify-between bg-white/95 px-8 py-3 backdrop-blur">
+      <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 bg-white/95 px-4 py-3 sm:-mx-8 sm:px-8 backdrop-blur">
         <div className="text-xs font-semibold text-neutral-500">
           {respondidas} de {TOTAL_PERGUNTAS} perguntas respondidas
         </div>

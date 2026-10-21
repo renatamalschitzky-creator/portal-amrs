@@ -3,14 +3,14 @@ import { BLOCOS } from "@/lib/briefing-perguntas";
 export default function PreviewPerfil() {
   return (
     <div className="min-h-screen bg-white">
-      <header className="flex items-center justify-between bg-amrs-preto px-8 py-4 text-white">
+      <header className="flex items-center justify-between bg-amrs-preto px-4 py-4 sm:px-8 text-white">
         <span className="text-sm font-semibold text-neutral-300">← Voltar ao calendário</span>
         <div className="text-lg font-black tracking-wide">
           AMRS<span className="text-amrs-laranja">.</span>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-8 py-10">
+      <main className="mx-auto max-w-3xl px-4 py-6 sm:px-8 sm:py-10">
         <h1 className="mb-1 text-2xl font-black text-amrs-preto">Meu Perfil</h1>
         <p className="mb-8 text-sm font-light text-neutral-500">
           Responda com calma — quanto mais completo, melhor fica o resultado final.

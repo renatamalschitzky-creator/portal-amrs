@@ -27,7 +27,7 @@ export default function PreviewCalendario() {
   const posts = gerarPostsMock();
   return (
     <div className="min-h-screen bg-white">
-      <header className="flex items-center justify-between bg-amrs-preto px-8 py-4 text-white">
+      <header className="flex items-center justify-between bg-amrs-preto px-4 py-4 sm:px-8 text-white">
         <div className="text-lg font-black tracking-wide">
           AMRS<span className="text-amrs-laranja">.</span>
         </div>
@@ -37,8 +37,8 @@ export default function PreviewCalendario() {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-6xl gap-10 px-8 py-10">
-        <div className="flex-1">
+      <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 sm:px-8 sm:py-10 lg:flex-row lg:gap-10">
+        <div className="min-w-0 flex-1">
           <div className="mb-8 flex flex-col gap-2 rounded-2xl bg-amrs-vinho p-6 text-white">
             <div className="text-xs font-bold uppercase tracking-wide text-white/70">
               Configuração do mês
@@ -54,7 +54,7 @@ export default function PreviewCalendario() {
           <CalendarioGrid posts={posts} />
         </div>
 
-        <aside className="w-64 shrink-0 space-y-4">
+        <aside className="order-first grid shrink-0 grid-cols-2 gap-3 lg:order-none lg:block lg:w-64 lg:space-y-4">
           <a className="block rounded-2xl border border-neutral-200 p-5 hover:border-amrs-laranja">
             <div className="text-sm font-bold text-amrs-preto">Meu Perfil</div>
             <div className="text-xs text-neutral-500">Completo</div>

@@ -52,13 +52,13 @@ export default function ConfiguracaoDoMes({
 
   if (!editando) {
     return (
-      <div className="mb-8 flex flex-col gap-2 rounded-2xl bg-amrs-vinho p-6 text-white">
+      <div className="mb-6 flex flex-col gap-2 rounded-2xl bg-amrs-vinho p-5 sm:mb-8 sm:p-6 text-white">
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="text-xs font-bold uppercase tracking-wide text-white/70">
               Configuração do mês
             </div>
-            <div className="text-2xl font-black">{ciclo || "Ciclo atual"}</div>
+            <div className="text-xl font-black sm:text-2xl">{ciclo || "Ciclo atual"}</div>
           </div>
           <button
             onClick={() => setEditando(true)}
@@ -95,7 +95,7 @@ export default function ConfiguracaoDoMes({
   }
 
   return (
-    <div className="mb-8 flex flex-col gap-4 rounded-2xl bg-amrs-vinho p-6 text-white">
+    <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-amrs-vinho p-5 sm:mb-8 sm:p-6 text-white">
       <div className="text-xs font-bold uppercase tracking-wide text-white/70">
         Configuração do mês
       </div>
