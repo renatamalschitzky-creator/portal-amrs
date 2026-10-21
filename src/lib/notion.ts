@@ -41,7 +41,10 @@ export type PostCalendario = {
   ciclo?: string;
   feriado: boolean;
   direcionamentoTema?: string;
+  comoUsar?: BlocoComoUsar[];
 };
+
+export type BlocoComoUsar = { tipo: "titulo" | "texto" | "item"; texto: string };
 
 export type Briefing = {
   id: string;
@@ -179,7 +182,49 @@ export async function getCalendarioDoCliente(clienteId: string): Promise<PostCal
     },
     sorts: [{ property: "Data", direction: "ascending" }],
   });
-  return res.results.map(mapPost);
+  const posts = res.results.map(mapPost);
+  await Promise.all(
+    posts.map(async (post) => {
+      post.comoUsar = await lerComoUsar(post.id);
+    })
+  );
+  return posts;
+}
+
+/**
+ * Lê o corpo do cartão e devolve só o bloco "Como usar este tema",
+ * que fica antes do primeiro divisor. O que vem depois (roteiro, legenda,
+ * pendências) é material interno e nunca vai para o cliente.
+ * Sem divisor, não mostra nada, por segurança.
+ */
+async function lerComoUsar(pageId: string): Promise<BlocoComoUsar[]> {
+  try {
+    const res = await notion.blocks.children.list({ block_id: pageId, page_size: 100 });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const blocos = res.results as any[];
+    if (!blocos.some((b) => b.type === "divider")) return [];
+    const saida: BlocoComoUsar[] = [];
+    for (const b of blocos) {
+      if (b.type === "divider") break;
+      const conteudo = b[b.type];
+      const rt = conteudo?.rich_text;
+      if (!Array.isArray(rt) || rt.length === 0) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const texto = rt.map((t: any) => t.plain_text).join("").trim();
+      if (!texto) continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const todoNegrito = rt.every((t: any) => t.annotations?.bold);
+      const ehTitulo = b.type.startsWith("heading_") || (b.type === "paragraph" && todoNegrito);
+      const ehItem = b.type === "bulleted_list_item" || b.type === "numbered_list_item";
+      saida.push({
+        tipo: ehTitulo ? "titulo" : ehItem ? "item" : "texto",
+        texto: texto.replace(/:$/, ""),
+      });
+    }
+    return saida;
+  } catch {
+    return [];
+  }
 }
 
 function parseRespostas(json: string): Record<string, string> {

@@ -73,7 +73,7 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
           onClick={() => setPostSelecionado(null)}
         >
           <div
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between">
@@ -106,6 +106,29 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
             <div className="text-sm font-medium text-amrs-preto">
               {postSelecionado.direcionamentoTema || "Sem sugestão de tema cadastrada ainda."}
             </div>
+            {postSelecionado.comoUsar && postSelecionado.comoUsar.length > 0 && (
+              <div className="mt-4 space-y-2 border-t border-neutral-100 pt-4">
+                {postSelecionado.comoUsar.map((b, i) =>
+                  b.tipo === "titulo" ? (
+                    <div
+                      key={i}
+                      className="pt-2 text-xs font-bold uppercase tracking-wide text-amrs-laranja"
+                    >
+                      {b.texto}
+                    </div>
+                  ) : b.tipo === "item" ? (
+                    <div key={i} className="flex gap-2 text-sm text-neutral-700">
+                      <span className="text-amrs-laranja">•</span>
+                      <span>{b.texto}</span>
+                    </div>
+                  ) : (
+                    <p key={i} className="text-sm text-neutral-700">
+                      {b.texto}
+                    </p>
+                  )
+                )}
+              </div>
+            )}
             {postSelecionado.feriado && (
               <div className="mt-3 inline-block rounded-md bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-800">
                 Data comemorativa
