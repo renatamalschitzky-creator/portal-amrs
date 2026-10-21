@@ -6,9 +6,47 @@ import type { PostCalendario } from "@/lib/notion";
 
 const DIAS_SEMANA = ["SEG", "TER", "QUA", "QUI", "SEX", "SÁB", "DOM"];
 
+function montarTextoParaIA(post: PostCalendario): string {
+  const linhas: string[] = [];
+  linhas.push(
+    `Quero criar um post de ${post.formato ?? "Instagram"} para as minhas redes sociais. Me ajude a escrever o conteúdo no meu tom de voz, com base no tema e nas orientações abaixo.`
+  );
+  linhas.push("");
+  linhas.push(`TEMA: ${post.direcionamentoTema ?? ""}`);
+  const blocos = (post.comoUsar ?? []).filter((b) => b.texto.toLowerCase() !== "como usar este tema");
+  if (blocos.length > 0) {
+    linhas.push("");
+    linhas.push("ORIENTAÇÕES:");
+    for (const b of blocos) {
+      if (b.tipo === "titulo") linhas.push(`\n${b.texto}:`);
+      else if (b.tipo === "item") linhas.push(`- ${b.texto}`);
+      else if (b.rotulo) linhas.push(`${b.rotulo}: ${b.texto}`);
+      else linhas.push(b.texto);
+    }
+  }
+  return linhas.join("\n");
+}
+
 export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
   const semanas = montarGradeDoCiclo(posts);
   const [postSelecionado, setPostSelecionado] = useState<PostCalendario | null>(null);
+  const [copiado, setCopiado] = useState(false);
+
+  async function copiarParaIA(post: PostCalendario) {
+    const texto = montarTextoParaIA(post);
+    try {
+      await navigator.clipboard.writeText(texto);
+    } catch {
+      const area = document.createElement("textarea");
+      area.value = texto;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      document.body.removeChild(area);
+    }
+    setCopiado(true);
+    setTimeout(() => setCopiado(false), 2500);
+  }
 
   if (semanas.length === 0) {
     return (
@@ -116,6 +154,11 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
                     >
                       {b.texto}
                     </div>
+                  ) : b.rotulo ? (
+                    <p key={i} className="text-sm text-neutral-700">
+                      <span className="font-bold text-amrs-preto">{b.rotulo}: </span>
+                      {b.texto}
+                    </p>
                   ) : b.tipo === "item" ? (
                     <div key={i} className="flex gap-2 text-sm text-neutral-700">
                       <span className="text-amrs-laranja">•</span>
@@ -129,6 +172,12 @@ export default function CalendarioGrid({ posts }: { posts: PostCalendario[] }) {
                 )}
               </div>
             )}
+            <button
+              onClick={() => copiarParaIA(postSelecionado)}
+              className="mt-5 w-full rounded-full bg-amrs-preto px-5 py-3 text-xs font-bold text-white hover:bg-neutral-800"
+            >
+              {copiado ? "Copiado ✓ Agora é só colar na sua IA" : "Copiar tema para usar na IA"}
+            </button>
             {postSelecionado.feriado && (
               <div className="mt-3 inline-block rounded-md bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-800">
                 Data comemorativa

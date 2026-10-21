@@ -33,13 +33,20 @@ export default async function PaginaDePerfil({
       <main className="mx-auto max-w-3xl px-8 py-10">
         <h1 className="mb-1 text-2xl font-black text-amrs-preto">Meu Perfil</h1>
         <p className="mb-8 text-sm font-light text-neutral-500">
-          Responda com calma — quanto mais completo, melhor fica o resultado final.
+          {briefing?.status === "Desatualizado"
+            ? "Sua equipe liberou a edição. Ajuste o que mudou e envie de novo. Suas respostas anteriores já estão aqui."
+            : "Responda com calma — quanto mais completo, melhor fica o resultado final."}
         </p>
 
         {briefing?.status === "Completo" ? (
           <BriefingStatusOuForm slug={slug} token={t!} nivel={briefing.nivelPreenchimento} />
         ) : (
-          <BriefingForm slug={slug} token={t!} respostasIniciais={briefing?.respostas} />
+          <BriefingForm
+            slug={slug}
+            token={t!}
+            respostasIniciais={briefing?.respostas}
+            edicaoLiberada={briefing?.status === "Desatualizado"}
+          />
         )}
       </main>
     </div>

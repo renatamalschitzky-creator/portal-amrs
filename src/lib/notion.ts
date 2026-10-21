@@ -44,7 +44,11 @@ export type PostCalendario = {
   comoUsar?: BlocoComoUsar[];
 };
 
-export type BlocoComoUsar = { tipo: "titulo" | "texto" | "item"; texto: string };
+export type BlocoComoUsar = {
+  tipo: "titulo" | "texto" | "item";
+  texto: string;
+  rotulo?: string;
+};
 
 export type Briefing = {
   id: string;
@@ -216,6 +220,18 @@ async function lerComoUsar(pageId: string): Promise<BlocoComoUsar[]> {
       const todoNegrito = rt.every((t: any) => t.annotations?.bold);
       const ehTitulo = b.type.startsWith("heading_") || (b.type === "paragraph" && todoNegrito);
       const ehItem = b.type === "bulleted_list_item" || b.type === "numbered_list_item";
+      // Parágrafo que começa com um rótulo em negrito ("Por que este tema: ...")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const primeiro: any = rt[0];
+      if (!ehTitulo && !ehItem && primeiro?.annotations?.bold && rt.length > 1) {
+        saida.push({
+          tipo: "texto",
+          rotulo: primeiro.plain_text.trim().replace(/:$/, ""),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          texto: rt.slice(1).map((t: any) => t.plain_text).join("").trim(),
+        });
+        continue;
+      }
       saida.push({
         tipo: ehTitulo ? "titulo" : ehItem ? "item" : "texto",
         texto: texto.replace(/:$/, ""),
@@ -316,8 +332,14 @@ export async function salvarRascunhoBriefing(
 export async function concluirBriefing(
   briefingId: string,
   nivel: "Excelente" | "Médio" | "Raso",
-  markdown: string
+  markdown: string,
+  substituirConteudo = false
 ): Promise<void> {
+  if (substituirConteudo) {
+    // Edição liberada: troca o texto antigo pelo novo, sem duplicar.
+    const antigos = await notion.blocks.children.list({ block_id: briefingId, page_size: 100 });
+    await Promise.all(antigos.results.map((b) => notion.blocks.delete({ block_id: b.id })));
+  }
   await notion.pages.update({
     page_id: briefingId,
     properties: {

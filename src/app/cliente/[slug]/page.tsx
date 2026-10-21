@@ -64,7 +64,7 @@ export default async function PaginaDoCliente({
           >
             <div className="text-sm font-bold text-amrs-preto">Meu Perfil</div>
             <div className="text-xs text-neutral-500">
-              {briefing?.status ?? "Preencher briefing"}
+              {briefing?.status === "Desatualizado" ? "Edição liberada" : (briefing?.status ?? "Preencher briefing")}
             </div>
           </a>
           <a

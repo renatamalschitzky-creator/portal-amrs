@@ -8,10 +8,12 @@ export default function BriefingForm({
   slug,
   token,
   respostasIniciais = {},
+  edicaoLiberada = false,
 }: {
   slug: string;
   token: string;
   respostasIniciais?: Record<string, string>;
+  edicaoLiberada?: boolean;
 }) {
   const [respostas, setRespostas] = useState<Record<string, string>>(respostasIniciais);
   const [pending, startTransition] = useTransition();
@@ -35,7 +37,7 @@ export default function BriefingForm({
 
   function enviar() {
     startTransition(() => {
-      salvarBriefing(slug, token, respostas);
+      salvarBriefing(slug, token, respostas, edicaoLiberada);
     });
   }
 

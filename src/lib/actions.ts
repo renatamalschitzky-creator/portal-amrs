@@ -56,7 +56,8 @@ export async function salvarProgresso(
 export async function salvarBriefing(
   slug: string,
   token: string,
-  respostas: Record<string, string>
+  respostas: Record<string, string>,
+  substituirConteudo = false
 ) {
   const cliente = await findClienteBySlugAndToken(slug, token);
   if (!cliente) throw new Error("Acesso inválido");
@@ -73,7 +74,7 @@ export async function salvarBriefing(
 
   const nivel = calcularNivel(respostas);
   const markdown = montarMarkdown(respostas);
-  await concluirBriefing(briefingId, nivel, markdown);
+  await concluirBriefing(briefingId, nivel, markdown, substituirConteudo);
 
   redirect(`/cliente/${slug}?token=${token}&briefing=salvo`);
 }
